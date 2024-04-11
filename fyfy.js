@@ -7,8 +7,15 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 5; //Annars är canvas för stor
 const ctx = canvas.getContext("2d");
 
-ctx.fillStyle = "blue";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+// ctx.fillStyle = "blue";
+// ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+window.onload = function () {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+  const img = document.getElementById("theme");
+  ctx.drawImage(img, 10, 10);
+};
 
 let xPos = 200;
 let yPos = 200;
