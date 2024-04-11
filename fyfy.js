@@ -4,6 +4,8 @@
 //CANVAS
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth - 4;
+canvas.height = window.innerHeight - 4;
 ctx.fillStyle = "blue";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
