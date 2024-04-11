@@ -4,7 +4,7 @@
 //CANVAS
 let canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 10; //Annars är canvas för stor
+canvas.height = window.innerHeight - 5; //Annars är canvas för stor
 const ctx = canvas.getContext("2d");
 
 ctx.fillStyle = "blue";
