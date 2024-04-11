@@ -2,10 +2,11 @@
 // requestAnimationFrame(func) anropa först i kod och sen i själva ritfunction
 
 //CANVAS
-const canvas = document.getElementById("myCanvas");
+let canvas = document.getElementById("myCanvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 10; //Annars är canvas för stor
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth - 4;
-canvas.height = window.innerHeight - 4;
+
 ctx.fillStyle = "blue";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
