@@ -4,21 +4,21 @@
 //CANVAS
 let canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 5; //Annars är canvas för stor
+canvas.height = window.innerHeight - 3.01; //Annars är canvas för stor
 const ctx = canvas.getContext("2d");
 
-// ctx.fillStyle = "blue";
-// ctx.fillRect(0, 0, canvas.width, canvas.height);
+const backgroundImage = new Image(); //Skapar en ny variabel som är bild
+backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
-window.onload = function () {
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-  const img = document.getElementById("theme");
-  ctx.drawImage(img, 10, 10);
-};
+// window.onload = function () {   //funktion för att uppdatera sidan konstant
+//   const canvas = document.getElementById("myCanvas");
+//   const ctx = canvas.getContext("2d");
+//   const img = document.getElementById("theme");
+//   ctx.drawImage(img, 0, 0);
+// };
 
-let xPos = 200;
-let yPos = 200;
+let xPos = canvas.width / 2;
+let yPos = canvas.height / 2;
 
 let speed = 7;
 let xspeed = 0;
@@ -27,11 +27,31 @@ let yspeed = 0;
 const size = 25;
 
 function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+
+  document.onkeydown = function (e) {
+    let key = e.key;
+    switch (key) {
+      case "w":
+        yspeed = -speed;
+        break;
+      case "s":
+        yspeed = speed;
+        break;
+      case "a":
+        xspeed = -speed;
+        break;
+      case "d":
+        xspeed = speed;
+    }
+  };
+
   xPos += xspeed;
   yPos += yspeed;
 
   ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(xPos, yPos, size, size);
   window.requestAnimationFrame(animate);
 }
 window.requestAnimationFrame(animate);
