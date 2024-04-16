@@ -20,7 +20,7 @@ backgroundImage.src = "theme.png"; //Bilden source är theme.png
 let xPos = canvas.width / 2;
 let yPos = canvas.height / 2;
 
-let speed = 7;
+let speed = 5;
 let xspeed = 0;
 let yspeed = 0;
 
@@ -44,11 +44,34 @@ function animate() {
         break;
       case "d":
         xspeed = speed;
+        break;
+    }
+    console.log("Postion", xPos, yPos);
+  };
+  document.onkeyup = function (e) {
+    let key = e.key;
+    switch (key) {
+      case "w":
+        yspeed = 10;
+        break;
+      case "s":
+        yspeed = 10;
+        break;
+      case "a":
+        xspeed = 0;
+        break;
+      case "d":
+        xspeed = 0;
+        break;
     }
   };
 
-  xPos += xspeed;
-  yPos += yspeed;
+  // if (xPos + xspeed > 378 && xPos + xspeed < 502) {
+  //   yPos += yspeed;
+  //   if (!(yPos + yspeed >= 455)) {
+  //     xPos += xspeed;
+  //   }
+  // }
 
   ctx.fillStyle = "black";
   ctx.fillRect(xPos, yPos, size, size);
