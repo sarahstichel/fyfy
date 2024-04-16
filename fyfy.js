@@ -1,3 +1,85 @@
+//massa kooood
+// requestAnimationFrame(func) anropa först i kod och sen i själva ritfunction
+
+//CANVAS
+let canvas = document.getElementById("myCanvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 3.01; //Annars är canvas för stor
+const ctx = canvas.getContext("2d");
+
+const backgroundImage = new Image(); //Skapar en ny variabel som är bild
+backgroundImage.src = "theme.png"; //Bilden source är theme.png
+
+// window.onload = function () {   //funktion för att uppdatera sidan konstant
+//   const canvas = document.getElementById("myCanvas");
+//   const ctx = canvas.getContext("2d");
+//   const img = document.getElementById("theme");
+//   ctx.drawImage(img, 0, 0);
+// };
+
+let xPos = canvas.width / 2;
+let yPos = canvas.height / 2;
+
+let speed = 5;
+let xspeed = 0;
+let yspeed = 0;
+
+const size = 25;
+
+function animate() {
+  console.log("Jag körs");
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+
+  document.onkeydown = function (e) {
+    let key = e.key;
+    switch (key) {
+      case "w":
+        yspeed = -speed;
+        break;
+      case "s":
+        yspeed = speed;
+        break;
+      case "a":
+        xspeed = -speed;
+        break;
+      case "d":
+        xspeed = speed;
+        break;
+    }
+    console.log("Postion", xPos, yPos);
+  };
+  document.onkeyup = function (e) {
+    let key = e.key;
+    switch (key) {
+      case "w":
+        yspeed = 10;
+        break;
+      case "s":
+        yspeed = 10;
+        break;
+      case "a":
+        xspeed = 0;
+        break;
+      case "d":
+        xspeed = 0;
+        break;
+    }
+  };
+
+  // if (xPos + xspeed > 378 && xPos + xspeed < 502) {
+  //   yPos += yspeed;
+  //   if (!(yPos + yspeed >= 455)) {
+  //     xPos += xspeed;
+  //   }
+  // }
+
+  ctx.fillStyle = "black";
+  ctx.fillRect(xPos, yPos, size, size);
+  window.requestAnimationFrame(animate);
+}
+window.requestAnimationFrame(animate);
+
 const medkitPower = 20;
 const strengthPotionPower = 5;
 
@@ -93,46 +175,5 @@ const Player2 = new Player("blue", 1100, 400);
 Player1.name = "Taras";
 Player2.name = "Sarah";
 
-//CANVAS
-let canvas = document.getElementById("myCanvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 3.01; //Annars är canvas för stor
-const ctx = canvas.getContext("2d");
-
-const backgroundImage = new Image(); //Skapar en ny variabel som är bild
-backgroundImage.src = "theme.png"; //Bilden source är theme.png
-
-let xPos = canvas.width / 2;
-let yPos = canvas.height / 2;
-
-const size = 25;
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
-  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunde
-  Player1.draw(ctx);
-  move(Player1);
-
-  //   document.onkeydown = function (e) {
-  //     let key = e.key;
-  //     switch (key) {
-  //       case "w":
-  //         Player1.yspeed = -this.speed;
-  //         break;
-  //       case "s":
-  //         Player1.yspeed = this.speed;
-  //         break;
-  //       case "a":
-  //         Player1.xspeed = -this.speed;
-  //         break;
-  //       case "d":
-  //         Player1.xspeed = this.speed;
-  //         break;
-  //     }
-}
-
-function collisionDetection() {}
-
-window.requestAnimationFrame(animate);
-
-window.requestAnimationFrame(animate);
+console.log(Player1.Player2);
+Player1.attack(Player2);
