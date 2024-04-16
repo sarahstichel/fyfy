@@ -27,6 +27,7 @@ let yspeed = 0;
 const size = 25;
 
 function animate() {
+  console.log("Jag körs")
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
 
