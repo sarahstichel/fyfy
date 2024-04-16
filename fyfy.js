@@ -110,6 +110,3 @@ const Player2 = new Player();
 
 Player1.name = "Taras";
 Player2.name = "Sarah";
-
-console.log(Player1.Player2);
-Player1.attack(Player2);
