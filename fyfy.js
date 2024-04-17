@@ -52,7 +52,7 @@ const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 function rutor() {
   ctx.fillStyle = "black";
-  ctx.drawRect(Math.random() * canvas.width);
+  ctx.drawRect(Math.random() * canvas.width, Math.random() * canvas.height);
 }
 
 let xPos = canvas.width / 2;
