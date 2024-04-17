@@ -1,5 +1,6 @@
 class Player {
   constructor(color, xPos, yPos, num) {
+    //Skapar Player elemenst
     this.name = "";
     this.hp = 100;
     this.strength = 3;
@@ -8,7 +9,7 @@ class Player {
     this.color = color;
     this.x = xPos;
     this.y = yPos;
-    this.speed = 2;
+    this.speed = 10;
     this.yspeed = 0;
     this.xspeed = 0;
     this.number = num;
@@ -53,103 +54,78 @@ backgroundImage.src = "theme.png"; //Bilden source är theme.png
 let xPos = canvas.width / 2;
 let yPos = canvas.height / 2;
 
-let speed = 5;
-let xspeed = 0;
-let yspeed = 0;
-
 const size = 25;
 
 const medkitPower = 20;
 const strengthPotionPower = 5;
 
-function move(player, player2) {
-  document.onkeydown = function (e) {
-    let key = e.key;
-    switch (player.number) {
-      case player.number == 1:
-        switch (key) {
-          case "w":
-            player.yspeed = -player.speed;
-            console.log(player.yspeed);
-            break;
-          case "s":
-            player.yspeed = player.speed;
-            break;
-          case "a":
-            player.xspeed = -player.speed;
-            break;
-          case "d":
-            player.xspeed = player.speed;
-            break;
-        }
-      case player2.number == 2:
-        switch (key) {
-          case "i":
-            player2.yspeed = -player2.speed;
-            console.log(player2.yspeed);
-            break;
-          case "k":
-            player2.yspeed = player2.speed;
-            break;
-          case "j":
-            player2.xspeed = -player2.speed;
-            break;
-          case "l":
-            player2.xspeed = player2.speed;
-            break;
-        }
-    }
-    console.log("Postion", player.x, player.y);
-    console.log("Postion", player2.x, player2.y);
-    player.y += player.yspeed;
-    player.x += player.xspeed;
-    player2.y += player2.yspeed;
-    player2.x += player2.xspeed;
-  };
-  document.onkeyup = function (e) {
-    let key = e.key;
-    switch (player.number) {
-      case player.number == 1:
-        switch (key) {
-          case "w":
-            player.yspeed = 0;
-            break;
-          case "s":
-            player.yspeed = 0;
-            break;
-          case "a":
-            player.xspeed = 0;
-            break;
-          case "d":
-            player.xspeed = 0;
-            break;
-        }
-      case player2.number == 2:
-        switch (key) {
-          case "i":
-            player2.yspeed = 0;
-            break;
-          case "k":
-            player2.yspeed = 0;
-            break;
-          case "j":
-            player2.xspeed = 0;
-            break;
-          case "l":
-            player2.xspeed = 0;
-            break;
-        }
-    }
-  };
-}
-//Move-funktion slut
+window.addEventListener("keydown", function (event) {
+  switch (event.key) {
+    case "w":
+      Player1.yspeed = -Player1.speed;
+      break;
+    case "s":
+      Player1.yspeed = Player1.speed;
+      break;
+    case "a":
+      Player1.xspeed = -Player1.speed;
+      break;
+    case "d":
+      Player1.xspeed = Player1.speed;
+      break;
+    case "ArrowUp":
+      Player2.yspeed = -Player2.speed;
+      break;
+    case "ArrowDown":
+      Player2.yspeed = Player2.speed;
+      break;
+    case "ArrowLeft":
+      Player2.xspeed = -Player2.speed;
+      break;
+    case "ArrowRight":
+      Player2.xspeed = Player2.speed;
+      break;
+  }
+});
+
+window.addEventListener("keyup", function (event) {
+  switch (event.key) {
+    case "w":
+      Player1.yspeed = 0;
+      break;
+    case "s":
+      Player1.yspeed = 0;
+      break;
+    case "a":
+      Player1.xspeed = 0;
+      break;
+    case "d":
+      Player1.xspeed = 0;
+      break;
+    case "ArrowUp":
+      Player2.yspeed = 0;
+      break;
+    case "ArrowDown":
+      Player2.yspeed = 0;
+      break;
+    case "ArrowLeft":
+      Player2.xspeed = 0;
+      break;
+    case "ArrowRight":
+      Player2.xspeed = 0;
+      break;
+  }
+});
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
   Player1.draw(ctx);
   Player2.draw(ctx);
-  move(Player1, Player2);
+  Player1.y += Player1.yspeed;
+  Player1.x += Player1.xspeed;
+  Player2.y += Player2.yspeed;
+  Player2.x += Player2.xspeed;
   window.requestAnimationFrame(animate);
 }
 window.requestAnimationFrame(animate);
