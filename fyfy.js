@@ -52,7 +52,9 @@ const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 function rutor() {
   ctx.fillStyle = "black";
-  ctx.drawRect(Math.random() * canvas.width, Math.random() * canvas.height);
+  let positionX = Math.random() * canvas.width;
+  let positionY = Math.random() * canvas.height;
+  ctx.drawRect(positionX, positionY, positionX + 100, positionY + 10);
 }
 
 let xPos = canvas.width / 2;
@@ -120,7 +122,7 @@ window.addEventListener("keyup", function (event) {
       break;
   }
 });
-
+rutor();
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
@@ -132,8 +134,5 @@ function animate() {
   Player2.x += Player2.xspeed;
   window.requestAnimationFrame(animate);
 }
-window.requestAnimationFrame(animate);
 
-function saker() {
-  ctx.fillRect(0, 431, 337, canvas.height);
-}
+window.requestAnimationFrame(animate);
