@@ -63,17 +63,12 @@ const ctx = canvas.getContext("2d");
 const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
-function rutor(ctx) {
+function drawPlatform(ctx) {
   ctx.fillStyle = "black";
   let positionX = Math.random() * canvas.width;
   let positionY = Math.random() * canvas.height;
-  ctx.drawRect(positionX, positionY, positionX + 100, positionY + 10);
+  ctx.fillRect(positionX, positionY, 100, 20);
 }
-
-let xPos = canvas.width / 2;
-let yPos = canvas.height / 2;
-
-const size = 25;
 
 window.addEventListener("keydown", function (event) {
   switch (event.key) {
@@ -133,10 +128,11 @@ window.addEventListener("keyup", function (event) {
       break;
   }
 });
-rutor();
+drawPlatform(ctx);
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+
   Player1.draw(ctx);
   Player2.draw(ctx);
   Player1.y += Player1.yspeed;
