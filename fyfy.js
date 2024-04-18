@@ -38,6 +38,18 @@ class Player {
   }
 } //Här slutar player-klassen
 
+//Här börjar Sprite-klassen
+class Sprite {
+  ready(bild) {
+    const spriteSheet = new Image();
+    spriteSheet.src = bild;
+    const spriteWidth = 120;
+    const spriteHeight = 80;
+  }
+}
+//Defenition av medkit och strength potion
+const medkitPower = 20;
+const strengthPotionPower = 5;
 //Spelare 1
 const Player1 = new Player("black", 100, 400, 1);
 const Player2 = new Player("blue", 1100, 400, 2);
@@ -50,7 +62,8 @@ const ctx = canvas.getContext("2d");
 
 const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
-function rutor() {
+
+function rutor(ctx) {
   ctx.fillStyle = "black";
   let positionX = Math.random() * canvas.width;
   let positionY = Math.random() * canvas.height;
@@ -62,13 +75,11 @@ let yPos = canvas.height / 2;
 
 const size = 25;
 
-const medkitPower = 20;
-const strengthPotionPower = 5;
-
 window.addEventListener("keydown", function (event) {
   switch (event.key) {
     case "w":
       Player1.yspeed = -Player1.speed;
+      Player1.Sprite.Jump(ctx);
       break;
     case "s":
       Player1.yspeed = Player1.speed;
@@ -132,6 +143,7 @@ function animate() {
   Player1.x += Player1.xspeed;
   Player2.y += Player2.yspeed;
   Player2.x += Player2.xspeed;
+
   window.requestAnimationFrame(animate);
 }
 
