@@ -14,18 +14,16 @@ class Player {
     this.xspeed = 0;
     this.number = num;
   }
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, 25, 25);
-  }
-
   useMedkit() {
     if (this.medkit > 0) {
       this.hp += medkitPower;
       this.medkit -= 1;
     }
   }
-
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, 25, 25);
+  }
   useStrengthpotion() {
     if (this.strengthPotion > 0) {
       this.strength += strengthPotionPower;
@@ -40,11 +38,29 @@ class Player {
 
 //Här börjar Sprite-klassen
 class Sprite {
-  ready(bild) {
-    const spriteSheet = new Image();
-    spriteSheet.src = bild;
-    const spriteWidth = 120;
-    const spriteHeight = 80;
+  constructor(frames, width, photo) {
+    this.spriteHeight = 80;
+    this.spriteWidth = width;
+    this.spriteSheet = new Image();
+    this.frameIndex = 0;
+    this.totalFrames = frames;
+    this.photo = photo;
+    this.scale = 2;
+  }
+
+  draw(ctx) {
+    this.spriteSheet.src = this.photo;
+    ctx.drawImage(
+      this.spriteSheet,
+      this.frameIndex * this.spriteWidth, // Beräknar framens x-koordinat
+      40, // Framens y-koordinat
+      this.spriteWidth,
+      this.spriteHeight,
+      0, // Ritar på x-koordinat 0 på canvas
+      0, // Ritar på y-koordinat 0 på canvas
+      this.spriteWidth * this.scale,
+      this.spriteHeight * this.scale
+    );
   }
 }
 //Defenition av medkit och strength potion
@@ -54,6 +70,7 @@ const strengthPotionPower = 5;
 const Player1 = new Player("black", 100, 400, 1);
 const Player2 = new Player("blue", 1100, 400, 2);
 
+const Idle = new Sprite(8, 120, "Player1_Idle.png");
 //CANVAS
 let canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth;
@@ -63,18 +80,22 @@ const ctx = canvas.getContext("2d");
 const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
-function drawPlatform(ctx) {
-  ctx.fillStyle = "black";
-  let positionX = Math.random() * canvas.width;
-  let positionY = Math.random() * canvas.height;
-  ctx.fillRect(positionX, positionY, 100, 20);
+class Platform {
+  draw(ctx) {
+    ctx.fillStyle = "black";
+    positionX = Math.round(Math.random() * canvas.width);
+    positionY = Math.round(Math.random() * canvas.height);
+    ctx.fillRect(positionX, positionY, 100, 20);
+  }
 }
+const platform1 = new Platform();
+const platform2 = new Platform();
 
 window.addEventListener("keydown", function (event) {
   switch (event.key) {
     case "w":
       Player1.yspeed = -Player1.speed;
-      Player1.Sprite.Jump(ctx);
+      // Player1.Sprite.Jump(ctx);
       break;
     case "s":
       Player1.yspeed = Player1.speed;
@@ -128,13 +149,23 @@ window.addEventListener("keyup", function (event) {
       break;
   }
 });
-drawPlatform(ctx);
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Töm skärmen
-  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+let lastTimestamp = 0,
+  maxFPS = 90,
+  timestep = 1000 / maxFPS;
+function animate(timestamp) {
+  if (timestamp - lastTimestamp < timestep) {
+    requestAnimationFrame(animate);
+    return;
+  }
+  lastTimestamp = timestamp;
 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+  ctx.fillStyle = "black";
+  ctx.fillRect(200, 200, 50, 50);
   Player1.draw(ctx);
   Player2.draw(ctx);
+  Idle.draw(ctx);
   Player1.y += Player1.yspeed;
   Player1.x += Player1.xspeed;
   Player2.y += Player2.yspeed;
