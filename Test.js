@@ -1,58 +1,94 @@
+let playerState = "idle";
+
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+const CANVAS_WIDTH = (canvas.width = 600);
+const CANVAS_HEIGHT = (canvas.height = 600);
 
-// Laddar sprite sheet
-const spriteSheet = new Image();
-spriteSheet.src = "Player1_Idle.png";
-
-// Variabler för spritens storlek
+const playerImage = new Image();
+playerImage.src = "Player1_Attack.png";
 const spriteWidth = 120;
 const spriteHeight = 80;
 
-// frameIndex håller reda på vilken frame som ska ritas.
-let frameIndex = 0;
-//totalFrames är hur många frames animationen är, det kan variera mellan olika animationer
-const totalFrames = 8;
-
-const scale = 2;
-
-// De här används för att "throttla" animationen så att den inte går för fort.
-let lastTimestamp = 0,
-  maxFPS = 15,
-  timestep = 1000 / maxFPS; // ms for each frame
-
-/**
- * timestamp är en inparameter som skickas in i funktionen av requestAnimationFrame()
- */
-function draw(timestamp) {
-  //if-sats för "throttling". För att det inte ska bli för hög FPS
-  if (timestamp - lastTimestamp < timestep) {
-    // Vi ska vänta med att rita så vi avbryter funktionen.
-    requestAnimationFrame(draw);
-    return;
+let gameFrame = 0;
+const staggerFrames = 5;
+const spriteAnimations = [];
+const animationStates = [
+  {
+    name: "idle",
+    frames: 7,
+  },
+  {
+    name: "jump",
+    frames: 7,
+  },
+  {
+    name: "fall",
+    frames: 7,
+  },
+  {
+    name: "run",
+    frames: 9,
+  },
+  {
+    name: "dizzy",
+    frames: 11,
+  },
+  {
+    name: "sit",
+    frames: 5,
+  },
+  {
+    name: "roll",
+    frames: 7,
+  },
+  {
+    name: "bite",
+    frames: 7,
+  },
+  {
+    name: "ko",
+    frames: 12,
+  },
+  {
+    name: "gethit",
+    frames: 4,
+  },
+];
+animationStates.forEach((state, index) => {
+  let frames = {
+    loc: [],
+  };
+  for (let j = 0; j < state.frames; j++) {
+    let positionX = j * spriteWidth;
+    let positionY = index * spriteHeight;
+    frames.loc.push({ x: positionX, y: positionY });
   }
-  // OK, dags att rita!
-  lastTimestamp = timestamp;
+  spriteAnimations[state.name] = frames;
+});
+console.log(spriteAnimations);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Tömmer canvasen
+function animate() {
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  let position =
+    Math.floor(gameFrame / staggerFrames) %
+    spriteAnimations[playerState].loc.length;
+  let frameX = spriteWidth * position;
+  let frameY = spriteAnimations[playerState].loc[position].y;
 
-  // Ritar den frame som är på frameIndex med skalan i scale
   ctx.drawImage(
-    spriteSheet,
-    frameIndex * spriteWidth, // Beräknar framens x-koordinat
-    40, // Framens y-koordinat är alltid 0
+    playerImage,
+    frameX,
+    frameY,
     spriteWidth,
     spriteHeight,
-    0, // Ritar på x-koordinat 0 på canvas
-    0, // Ritar på y-koordinat 0 på canvas
-    spriteWidth * scale,
-    spriteHeight * scale
+    0,
+    0,
+    spriteWidth,
+    spriteHeight
   );
 
-  // Se till att frameIndex inte blir högre än antalet frames. Börja om på frame 0 i så fall.
-  frameIndex = (frameIndex + 1) % totalFrames;
-  requestAnimationFrame(draw);
+  gameFrame++;
+  requestAnimationFrame(animate);
 }
-
-// Startar animationen när bilden laddats.
-spriteSheet.onload = requestAnimationFrame(draw);
+animate();

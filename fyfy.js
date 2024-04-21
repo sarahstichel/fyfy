@@ -1,6 +1,14 @@
+//CANVAS
+let canvas = document.getElementById("myCanvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 3.01; //Annars är canvas för stor
+const ctx = canvas.getContext("2d");
+
+const backgroundImage = new Image(); //Skapar en ny variabel som är bild
+backgroundImage.src = "theme.png"; //Bilden source är theme.png
+//Skapar Player elemenst
 class Player {
   constructor(color, xPos, yPos, num) {
-    //Skapar Player elemenst
     this.name = "";
     this.hp = 100;
     this.strength = 3;
@@ -36,49 +44,33 @@ class Player {
   }
 } //Här slutar player-klassen
 
-//Här börjar Sprite-klassen
-class Sprite {
-  constructor(frames, width, photo) {
-    this.spriteHeight = 80;
-    this.spriteWidth = width;
-    this.spriteSheet = new Image();
-    this.frameIndex = 0;
-    this.totalFrames = frames;
-    this.photo = photo;
-    this.scale = 2;
-  }
+//Här börjar Sprite 
+spriteAnimations =[
+  "idle" ={
+    width:120,
+    height:80,
+  },
+  "jump" = {
 
-  draw(ctx) {
-    this.spriteSheet.src = this.photo;
-    ctx.drawImage(
-      this.spriteSheet,
-      this.frameIndex * this.spriteWidth, // Beräknar framens x-koordinat
-      40, // Framens y-koordinat
-      this.spriteWidth,
-      this.spriteHeight,
-      0, // Ritar på x-koordinat 0 på canvas
-      0, // Ritar på y-koordinat 0 på canvas
-      this.spriteWidth * this.scale,
-      this.spriteHeight * this.scale
-    );
-  }
-}
+  },
+  "death" = {
+
+  },
+  "attack"={
+
+  },
+  "run"={
+
+  },
+
+]
+
 //Defenition av medkit och strength potion
 const medkitPower = 20;
 const strengthPotionPower = 5;
 //Spelare 1
 const Player1 = new Player("black", 100, 400, 1);
 const Player2 = new Player("blue", 1100, 400, 2);
-
-const Idle = new Sprite(8, 120, "Player1_Idle.png");
-//CANVAS
-let canvas = document.getElementById("myCanvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 3.01; //Annars är canvas för stor
-const ctx = canvas.getContext("2d");
-
-const backgroundImage = new Image(); //Skapar en ny variabel som är bild
-backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
 class Platform {
   draw(ctx) {
@@ -165,7 +157,7 @@ function animate(timestamp) {
   ctx.fillRect(200, 200, 50, 50);
   Player1.draw(ctx);
   Player2.draw(ctx);
-  Idle.draw(ctx);
+
   Player1.y += Player1.yspeed;
   Player1.x += Player1.xspeed;
   Player2.y += Player2.yspeed;
