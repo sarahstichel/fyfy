@@ -44,26 +44,7 @@ class Player {
   }
 } //Här slutar player-klassen
 
-//Här börjar Sprite 
-spriteAnimations =[
-  "idle" ={
-    width:120,
-    height:80,
-  },
-  "jump" = {
-
-  },
-  "death" = {
-
-  },
-  "attack"={
-
-  },
-  "run"={
-
-  },
-
-]
+//Här börjar Sprite
 
 //Defenition av medkit och strength potion
 const medkitPower = 20;
@@ -73,12 +54,12 @@ const Player1 = new Player("black", 100, 400, 1);
 const Player2 = new Player("blue", 1100, 400, 2);
 
 class Platform {
-  draw(ctx) {
-    ctx.fillStyle = "black";
-    positionX = Math.round(Math.random() * canvas.width);
-    positionY = Math.round(Math.random() * canvas.height);
-    ctx.fillRect(positionX, positionY, 100, 20);
-  }
+  // draw(ctx) {
+  //   ctx.fillStyle = "black";
+  //   positionX = Math.round(Math.random() * canvas.width);
+  //   positionY = Math.round(Math.random() * canvas.height);
+  //   ctx.fillRect(positionX, positionY, 100, 20);
+  // }
 }
 const platform1 = new Platform();
 const platform2 = new Platform();
@@ -144,6 +125,7 @@ window.addEventListener("keyup", function (event) {
 let lastTimestamp = 0,
   maxFPS = 90,
   timestep = 1000 / maxFPS;
+
 function animate(timestamp) {
   if (timestamp - lastTimestamp < timestep) {
     requestAnimationFrame(animate);
@@ -154,14 +136,24 @@ function animate(timestamp) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
   ctx.fillStyle = "black";
-  ctx.fillRect(200, 200, 50, 50);
+  ctx.fillRect(200, 200, 30, 200);
   Player1.draw(ctx);
   Player2.draw(ctx);
 
-  Player1.y += Player1.yspeed;
-  Player1.x += Player1.xspeed;
-  Player2.y += Player2.yspeed;
-  Player2.x += Player2.xspeed;
+  if (Player1.y < canvas.height && Player1.x < canvas.width) {
+    Player1.y += Player1.yspeed;
+    Player1.x += Player1.xspeed;
+  } else {
+    Player1.yspeed = 0;
+    Player1.xspeed = 0;
+  }
+  if (Player2.y < canvas.height && Player2.x < canvas.width) {
+    Player2.y += Player2.yspeed;
+    Player2.x += Player2.xspeed;
+  } else {
+    Player2.yspeed = 0;
+    Player2.xspeed = 0;
+  }
 
   window.requestAnimationFrame(animate);
 }
