@@ -132,13 +132,13 @@ window.addEventListener("keydown", function (event) {
     case "w":
       Player1.yspeed = -Player1.speed;
       Player1.playerState = "jump";
-      // Player1.Sprite.Jump(ctx);
       break;
     case "s":
       Player1.yspeed = Player1.speed;
       break;
     case "a":
       Player1.xspeed = -Player1.speed;
+      Player1.playerState = "run";
       break;
     case "d":
       Player1.xspeed = Player1.speed;
@@ -152,9 +152,11 @@ window.addEventListener("keydown", function (event) {
       break;
     case "ArrowLeft":
       Player2.xspeed = -Player2.speed;
+      Player2.playerState = "run";
       break;
     case "ArrowRight":
       Player2.xspeed = Player2.speed;
+      Player2.playerState = "run";
       break;
   }
 });
@@ -163,27 +165,35 @@ window.addEventListener("keyup", function (event) {
   switch (event.key) {
     case "w":
       Player1.yspeed = 0;
+      Player1.playerState = "idle";
       break;
     case "s":
       Player1.yspeed = 0;
+      Player1.playerState = "idle";
       break;
     case "a":
       Player1.xspeed = 0;
+      Player1.playerState = "idle";
       break;
     case "d":
       Player1.xspeed = 0;
+      Player1.playerState = "idle";
       break;
     case "ArrowUp":
       Player2.yspeed = 0;
+      Player2.playerState = "idle";
       break;
     case "ArrowDown":
       Player2.yspeed = 0;
+      Player2.playerState = "idle";
       break;
     case "ArrowLeft":
       Player2.xspeed = 0;
+      Player2.playerState = "idle";
       break;
     case "ArrowRight":
       Player2.xspeed = 0;
+      Player2.playerState = "idle";
       break;
   }
 });
