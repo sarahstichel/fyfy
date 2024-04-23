@@ -113,8 +113,8 @@ console.log(spriteAnimations);
 const medkitPower = 20;
 const strengthPotionPower = 5;
 //Spelare 1
-const Player1 = new Player(100, 400, 1, Player1Img);
-const Player2 = new Player(1100, 400, 2, Player2Img);
+const Player1 = new Player(100, 200, 1, Player1Img);
+const Player2 = new Player(1100, 200, 2, Player2Img);
 
 class Platform {
   // draw(ctx) {
