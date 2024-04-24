@@ -213,18 +213,26 @@ function animate(timestamp) {
   ctx.fillStyle = "black";
   ctx.fillRect(200, 200, 30, 200);
   Player1.animate(ctx);
-  Player2.animate(ctx);
-  if (Player1.y < canvas.height && Player1.x < canvas.width) {
+  Player2.animate(ctx); //   } // }
+  //if (xPos + xspeed > 378 && xPos + xspeed < 502) {
+  //   yPos += yspeed;
+  //   if (!(yPos + yspeed >= 455)) {
+  //     xPos += xspeed;
+  if (
+    Player1.y + Player1.yspeed < canvas.height &&
+    Player1.x + Player1.xspeed < canvas.width
+  ) {
     Player1.y += Player1.yspeed;
     Player1.x += Player1.xspeed;
-  } else {
-    Player1.yspeed = 0;
-    Player1.xspeed = 0;
   }
-  if (Player2.y < canvas.height - 20 && Player2.x < canvas.width) {
+  if (
+    Player2.y + Player2.yspeed < canvas.height - 235 &&
+    Player2.x + Player2.xspeed < canvas.width - 180
+  ) {
     Player2.y += Player2.yspeed;
     Player2.x += Player2.xspeed;
   }
+
   window.requestAnimationFrame(animate);
 }
 window.requestAnimationFrame(animate);
