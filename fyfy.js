@@ -144,6 +144,10 @@ window.addEventListener("keydown", function (event) {
       Player1.xspeed = Player1.speed;
       Player1.playerState = "run";
       break;
+    case "f":
+      Player1.attack();
+      Player1.playerState = "attack";
+      break;
     case "ArrowUp":
       Player2.yspeed = -Player2.speed;
       break;
@@ -177,6 +181,9 @@ window.addEventListener("keyup", function (event) {
       break;
     case "d":
       Player1.xspeed = 0;
+      Player1.playerState = "idle";
+      break;
+    case "f":
       Player1.playerState = "idle";
       break;
     case "ArrowUp":
