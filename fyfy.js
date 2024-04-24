@@ -12,7 +12,7 @@ Player1Img.src = "Player1_combined.png";
 Player2Img = new Image();
 Player2Img.src = "Player2_combined.png";
 class Player {
-  constructor(xPos, yPos, num, image) {
+  constructor(xPos, yPos, num, image, direction) {
     this.name = "";
     this.hp = 100;
     this.strength = 3;
@@ -26,6 +26,7 @@ class Player {
     this.number = num;
     this.playerImage = image;
     this.playerState = "idle";
+    this.direction = direction;
   }
   useMedkit() {
     if (this.medkit > 0) {
@@ -51,12 +52,19 @@ class Player {
       spriteWidth * 3,
       spriteHeight * 3
     );
-
-    gameFrame++;
   }
   useStrengthpotion() {
     if (this.strengthPotion > 0) {
       this.strength += strengthPotionPower;
+    }
+  }
+
+  newPosition() {
+    if (this.y + this.yspeed < canvas.height - 235) {
+      this.y += this.yspeed;
+    }
+    if (this.x + this.xspeed < canvas.width - 180 && this.x + this.xspeed > 0) {
+      this.x += this.xspeed;
     }
   }
 
@@ -113,8 +121,9 @@ console.log(spriteAnimations);
 const medkitPower = 20;
 const strengthPotionPower = 5;
 //Spelare 1
-const Player1 = new Player(100, 200, 1, Player1Img);
-const Player2 = new Player(1100, 200, 2, Player2Img);
+const Player1 = new Player(100, 200, 1, Player1Img, "right");
+const Player2 = new Player(1100, 200, 2, Player2Img, "left");
+function collision({}) {}
 
 class Platform {
   // draw(ctx) {
@@ -218,27 +227,11 @@ function animate(timestamp) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
   ctx.fillStyle = "black";
-  ctx.fillRect(200, 200, 30, 200);
+  ctx.fillRect(200, 600, 200, 30);
   Player1.animate(ctx);
-  Player2.animate(ctx); //   } // }
-  //if (xPos + xspeed > 378 && xPos + xspeed < 502) {
-  //   yPos += yspeed;
-  //   if (!(yPos + yspeed >= 455)) {
-  //     xPos += xspeed;
-  if (
-    Player1.y + Player1.yspeed < canvas.height &&
-    Player1.x + Player1.xspeed < canvas.width
-  ) {
-    Player1.y += Player1.yspeed;
-    Player1.x += Player1.xspeed;
-  }
-  if (
-    Player2.y + Player2.yspeed < canvas.height - 235 &&
-    Player2.x + Player2.xspeed < canvas.width - 180
-  ) {
-    Player2.y += Player2.yspeed;
-    Player2.x += Player2.xspeed;
-  }
+  Player2.animate(ctx);
+  Player1.newPosition();
+  Player2.newPosition();
 
   window.requestAnimationFrame(animate);
 }
