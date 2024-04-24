@@ -221,14 +221,10 @@ function animate(timestamp) {
     Player1.yspeed = 0;
     Player1.xspeed = 0;
   }
-  if (Player2.y < canvas.height && Player2.x < canvas.width) {
+  if (Player2.y < canvas.height - 20 && Player2.x < canvas.width) {
     Player2.y += Player2.yspeed;
     Player2.x += Player2.xspeed;
-  } else {
-    Player2.yspeed = 0;
-    Player2.xspeed = 0;
   }
   window.requestAnimationFrame(animate);
 }
-
 window.requestAnimationFrame(animate);
