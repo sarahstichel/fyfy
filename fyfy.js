@@ -49,9 +49,10 @@ class Player {
       spriteHeight,
       this.x,
       this.y,
-      spriteWidth * 3,
-      spriteHeight * 3
+      spriteWidth * 2,
+      spriteHeight * 2
     );
+    gameFrame++;
   }
   useStrengthpotion() {
     if (this.strengthPotion > 0) {
@@ -63,7 +64,10 @@ class Player {
     if (this.y + this.yspeed < canvas.height - 235) {
       this.y += this.yspeed;
     }
-    if (this.x + this.xspeed < canvas.width - 180 && this.x + this.xspeed > 0) {
+    if (
+      this.x + this.xspeed < canvas.width - 180 &&
+      this.x + this.xspeed > -110
+    ) {
       this.x += this.xspeed;
     }
   }
@@ -123,18 +127,9 @@ const strengthPotionPower = 5;
 //Spelare 1
 const Player1 = new Player(100, 200, 1, Player1Img, "right");
 const Player2 = new Player(1100, 200, 2, Player2Img, "left");
-function collision({}) {}
-
-class Platform {
-  // draw(ctx) {
-  //   ctx.fillStyle = "black";
-  //   positionX = Math.round(Math.random() * canvas.width);
-  //   positionY = Math.round(Math.random() * canvas.height);
-  //   ctx.fillRect(positionX, positionY, 100, 20);
-  // }
-}
-const platform1 = new Platform();
-const platform2 = new Platform();
+// function collision({ Player1, Player2 }) {
+//   return Player1.x + Player1.width >= Player2.x;
+// }
 
 window.addEventListener("keydown", function (event) {
   switch (event.key) {
@@ -232,6 +227,10 @@ function animate(timestamp) {
   Player2.animate(ctx);
   Player1.newPosition();
   Player2.newPosition();
+  // if (collision({ Player1, Player2 })) {
+  //   Player1.xspeed = 0;
+  //   Player2.xspeed = 0;
+  // }
 
   window.requestAnimationFrame(animate);
 }
