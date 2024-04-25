@@ -8,9 +8,88 @@ const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 //Skapar Player elemenst
 Player1Img = new Image();
-Player1Img.src = "Player1_combined.png";
+Player1Img.src = "Player1.png";
 Player2Img = new Image();
-Player2Img.src = "Player2_combined.png";
+Player2Img.src = "Player2.png";
+
+const spriteWidth = 120;
+const spriteHeight = 80;
+
+let gameFrame = 0;
+const staggerFrames = 5;
+const spriteAnimations = [];
+const animationStates = [
+  {
+    name: "idle_right",
+    frames: 10,
+  },
+  {
+    name: "idle_left",
+    frames: 10,
+  },
+  {
+    name: "run_right",
+    frames: 10,
+  },
+  {
+    name: "run_left",
+    frames: 10,
+  },
+  {
+    name: "death_right",
+    frames: 10,
+  },
+  {
+    name: "death_left",
+    frames: 10,
+  },
+  {
+    name: "attack_right",
+    frames: 4,
+  },
+  {
+    name: "attack_left",
+    frames: 4,
+  },
+  {
+    name: "jump_right",
+    frames: 3,
+  },
+  {
+    name: "jump_left",
+    frames: 3,
+  },
+  {
+    name: "fall_right",
+    frames: 3,
+  },
+  {
+    name: "fall_left",
+    frames: 3,
+  },
+  {
+    name: "turn_arround_right",
+    frames: 3,
+  },
+  {
+    name: "turn_arround_left",
+    frames: 3,
+  },
+];
+
+animationStates.forEach((state, index) => {
+  let frames = {
+    loc: [],
+  };
+  for (let j = 0; j < state.frames; j++) {
+    let positionX = j * spriteWidth;
+    let positionY = index * spriteHeight;
+    frames.loc.push({ x: positionX, y: positionY });
+  }
+  spriteAnimations[state.name] = frames;
+});
+console.log(spriteAnimations);
+
 class Player {
   constructor(xPos, yPos, num, image, direction) {
     this.name = "";
@@ -25,8 +104,8 @@ class Player {
     this.xspeed = 0;
     this.number = num;
     this.playerImage = image;
-    this.playerState = "idle";
     this.direction = direction;
+    this.playerState = `idle_${this.direction}`;
   }
   useMedkit() {
     if (this.medkit > 0) {
@@ -78,55 +157,22 @@ class Player {
   }
 } //Här slutar player-klassen
 
-const spriteWidth = 120;
-const spriteHeight = 80;
-
-let gameFrame = 0;
-const staggerFrames = 5;
-const spriteAnimations = [];
-const animationStates = [
-  {
-    name: "idle",
-    frames: 10,
-  },
-  {
-    name: "death",
-    frames: 10,
-  },
-  {
-    name: "run",
-    frames: 10,
-  },
-  {
-    name: "attack",
-    frames: 4,
-  },
-  {
-    name: "jump",
-    frames: 3,
-  },
-];
-animationStates.forEach((state, index) => {
-  let frames = {
-    loc: [],
-  };
-  for (let j = 0; j < state.frames; j++) {
-    let positionX = j * spriteWidth;
-    let positionY = index * spriteHeight;
-    frames.loc.push({ x: positionX, y: positionY });
+class Platform {
+  constructor(yPos, xPos) {
+    this.yPos = yPos;
+    this.xPos = xPos;
   }
-  spriteAnimations[state.name] = frames;
-});
-console.log(spriteAnimations);
-
-//Här börjar Sprite
+  drawPlatform(ctx) {
+    ctx.fillRect(this.yPos, this.xPos, 30, 200);
+  }
+}
+const Platform1 = new Platform(500, 300);
+const Platform2 = new Platform(500, 400);
 
 //Defenition av medkit och strength potion
 const medkitPower = 20;
 const strengthPotionPower = 5;
-//Spelare 1
-const Player1 = new Player(100, 200, 1, Player1Img, "right");
-const Player2 = new Player(1100, 200, 2, Player2Img, "left");
+
 // function collision({ Player1, Player2 }) {
 //   return Player1.x + Player1.width >= Player2.x;
 // }
@@ -135,36 +181,41 @@ window.addEventListener("keydown", function (event) {
   switch (event.key) {
     case "w":
       Player1.yspeed = -Player1.speed;
-      Player1.playerState = "jump";
+      Player1.playerState = `jump_${Player1.direction}`;
       break;
     case "s":
       Player1.yspeed = Player1.speed;
       break;
     case "a":
       Player1.xspeed = -Player1.speed;
-      Player1.playerState = "run";
+      Player1.direction = "left";
+      Player1.playerState = `run_${Player1.direction}`;
       break;
     case "d":
       Player1.xspeed = Player1.speed;
-      Player1.playerState = "run";
+      Player1.direction = "right";
+      Player1.playerState = `run_${Player1.direction}`;
       break;
     case "f":
       Player1.attack();
-      Player1.playerState = "attack";
+      Player1.playerState = `attack_${Player1.direction}`;
       break;
     case "ArrowUp":
       Player2.yspeed = -Player2.speed;
+      Player2.playerState = `jump_${Player2.direction}`;
       break;
     case "ArrowDown":
       Player2.yspeed = Player2.speed;
       break;
     case "ArrowLeft":
       Player2.xspeed = -Player2.speed;
-      Player2.playerState = "run";
+      Player2.direction = "left";
+      Player2.playerState = `run_${Player2.direction}`;
       break;
     case "ArrowRight":
       Player2.xspeed = Player2.speed;
-      Player2.playerState = "run";
+      Player2.direction = "right";
+      Player2.playerState = `run_${Player2.direction}`;
       break;
   }
 });
@@ -173,41 +224,45 @@ window.addEventListener("keyup", function (event) {
   switch (event.key) {
     case "w":
       Player1.yspeed = 0;
-      Player1.playerState = "idle";
+      Player1.playerState = `fall_${Player1.direction}`;
       break;
     case "s":
       Player1.yspeed = 0;
-      Player1.playerState = "idle";
+      Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "a":
       Player1.xspeed = 0;
-      Player1.playerState = "idle";
+      Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "d":
       Player1.xspeed = 0;
-      Player1.playerState = "idle";
+      Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "f":
-      Player1.playerState = "idle";
+      Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "ArrowUp":
       Player2.yspeed = 0;
-      Player2.playerState = "idle";
+      Player2.playerState = `fall_${Player2.direction}`;
       break;
     case "ArrowDown":
       Player2.yspeed = 0;
-      Player2.playerState = "idle";
+      Player2.playerState = `idle_${Player2.direction}`;
       break;
     case "ArrowLeft":
       Player2.xspeed = 0;
-      Player2.playerState = "idle";
+      Player2.playerState = `idle_${Player2.direction}`;
       break;
     case "ArrowRight":
       Player2.xspeed = 0;
-      Player2.playerState = "idle";
+      Player2.playerState = `idle_${Player2.direction}`;
       break;
   }
 });
+//Spelare 1
+const Player1 = new Player(100, 300, 1, Player1Img, "right");
+const Player2 = new Player(1100, 200, 2, Player2Img, "left");
+
 let lastTimestamp = 0,
   maxFPS = 90,
   timestep = 1000 / maxFPS;
@@ -227,6 +282,7 @@ function animate(timestamp) {
   Player2.animate(ctx);
   Player1.newPosition();
   Player2.newPosition();
+  Platform1.drawPlatform(ctx);
   // if (collision({ Player1, Player2 })) {
   //   Player1.xspeed = 0;
   //   Player2.xspeed = 0;
