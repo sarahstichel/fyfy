@@ -6,12 +6,131 @@ const ctx = canvas.getContext("2d");
 
 const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
+
 //Skapar Player elemenst
 Player1Img = new Image();
 Player1Img.src = "Player1.png";
 Player2Img = new Image();
 Player2Img.src = "Player2.png";
+let gameobjects;
 
+class Platform {
+  constructor(yPos, xPos) {
+    this.yPos = yPos;
+    this.xPos = xPos;
+  }
+  drawPlatform(ctx) {
+    ctx.fillRect(this.yPos, this.xPos, 30, 200);
+  }
+}
+
+function createWorld() {
+  gameobjects = [
+    new Platform(500, 300),
+    new Platform(700, 500),
+    new Platform(400, 500),
+  ];
+}
+
+// function detectCollisions(){
+//   let obj1;
+//   let obj2;
+
+//   // Reset collision state of all objects
+//   for (let i = 0; i < gameObjects.length; i++) {
+//       gameObjects[i].isColliding = false;
+//   }
+
+//   // Start checking for collisions
+//   for (let i = 0; i < gameObjects.length; i++)
+//   {
+//       obj1 = gameObjects[i];
+//       for (let j = i + 1; j < gameObjects.length; j++)
+//       {
+//           obj2 = gameObjects[j];
+
+//           // Compare object1 with object2
+//           if (rectIntersect(obj1.x, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height)){
+//               obj1.isColliding = true;
+//               obj2.isColliding = true;
+//           }
+//       }
+//   }
+// }
+
+class Player {
+  constructor(xPos, yPos, num, image, direction) {
+    this.name = "";
+    this.hp = 100;
+    this.strength = 3;
+    this.medkit = 0;
+    this.strengthPotion = 0;
+    this.x = xPos;
+    this.y = yPos;
+    this.speed = 10;
+    this.yspeed = 0;
+    this.xspeed = 0;
+    this.number = num;
+    this.playerImage = image;
+    this.direction = direction;
+    this.playerState = `idle_${this.direction}`;
+    this.gravity = 0.05;
+    this.gravitySpeed = 0;
+  }
+  useMedkit() {
+    if (this.medkit > 0) {
+      this.hp += medkitPower;
+      this.medkit -= 1;
+    }
+  }
+  animate(ctx) {
+    let position =
+      Math.floor(gameFrame / staggerFrames) %
+      spriteAnimations[this.playerState].loc.length;
+    let FrameX = spriteAnimations[this.playerState].loc[position].x;
+    let FrameY = spriteAnimations[this.playerState].loc[position].y;
+
+    ctx.drawImage(
+      this.playerImage,
+      FrameX,
+      FrameY,
+      spriteWidth,
+      spriteHeight,
+      this.x,
+      this.y,
+      spriteWidth * 2,
+      spriteHeight * 2
+    );
+    gameFrame++;
+  }
+  useStrengthpotion() {
+    if (this.strengthPotion > 0) {
+      this.strength += strengthPotionPower;
+    }
+  }
+
+  newPosition() {
+    if (this.gravitySpeed < this.speed) {
+      this.gravitySpeed += this.gravity;
+    } else if (this.gravitySpeed >= this.speed) {
+      this.gravitySpeed = 0;
+    }
+    if (this.y + this.yspeed < canvas.height - 235) {
+      this.y += this.yspeed + this.gravitySpeed;
+    }
+    if (
+      this.x + this.xspeed < canvas.width - spriteWidth &&
+      this.x + this.xspeed > -spriteWidth
+    ) {
+      this.x += this.xspeed;
+    }
+  }
+
+  attack(player) {
+    // check if this attack hits player
+    // if hit reduce hp on player
+  }
+} //Här slutar player-klassen
 const spriteWidth = 120;
 const spriteHeight = 80;
 
@@ -90,84 +209,8 @@ animationStates.forEach((state, index) => {
 });
 console.log(spriteAnimations);
 
-class Player {
-  constructor(xPos, yPos, num, image, direction) {
-    this.name = "";
-    this.hp = 100;
-    this.strength = 3;
-    this.medkit = 0;
-    this.strengthPotion = 0;
-    this.x = xPos;
-    this.y = yPos;
-    this.speed = 10;
-    this.yspeed = 0;
-    this.xspeed = 0;
-    this.number = num;
-    this.playerImage = image;
-    this.direction = direction;
-    this.playerState = `idle_${this.direction}`;
-  }
-  useMedkit() {
-    if (this.medkit > 0) {
-      this.hp += medkitPower;
-      this.medkit -= 1;
-    }
-  }
-  animate(ctx) {
-    let position =
-      Math.floor(gameFrame / staggerFrames) %
-      spriteAnimations[this.playerState].loc.length;
-    let FrameX = spriteAnimations[this.playerState].loc[position].x;
-    let FrameY = spriteAnimations[this.playerState].loc[position].y;
-
-    ctx.drawImage(
-      this.playerImage,
-      FrameX,
-      FrameY,
-      spriteWidth,
-      spriteHeight,
-      this.x,
-      this.y,
-      spriteWidth * 2,
-      spriteHeight * 2
-    );
-    gameFrame++;
-  }
-  useStrengthpotion() {
-    if (this.strengthPotion > 0) {
-      this.strength += strengthPotionPower;
-    }
-  }
-
-  newPosition() {
-    if (this.y + this.yspeed < canvas.height - 235) {
-      this.y += this.yspeed;
-    }
-    if (
-      this.x + this.xspeed < canvas.width - 180 &&
-      this.x + this.xspeed > -110
-    ) {
-      this.x += this.xspeed;
-    }
-  }
-
-  attack(player) {
-    // check if this attack hits player
-    // if hit reduce hp on player
-  }
-} //Här slutar player-klassen
-
-class Platform {
-  constructor(yPos, xPos) {
-    this.yPos = yPos;
-    this.xPos = xPos;
-  }
-  drawPlatform(ctx) {
-    ctx.fillRect(this.yPos, this.xPos, 30, 200);
-  }
-}
-const Platform1 = new Platform(500, 300);
-const Platform2 = new Platform(500, 400);
+// const Platform1 = new Platform(500, 300);
+// const Platform2 = new Platform(500, 400);
 
 //Defenition av medkit och strength potion
 const medkitPower = 20;
@@ -282,7 +325,6 @@ function animate(timestamp) {
   Player2.animate(ctx);
   Player1.newPosition();
   Player2.newPosition();
-  Platform1.drawPlatform(ctx);
   // if (collision({ Player1, Player2 })) {
   //   Player1.xspeed = 0;
   //   Player2.xspeed = 0;
