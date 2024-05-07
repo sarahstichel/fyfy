@@ -8,55 +8,36 @@ const backgroundImage = new Image(); //Skapar en ny variabel som är bild
 backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
 //Skapar Player elemenst
-Player1Img = new Image();
+Player1Img = new Image(); //Gör variabel Player1Img to Image format
 Player1Img.src = "Player1.png";
 Player2Img = new Image();
 Player2Img.src = "Player2.png";
-let gameobjects;
+let gameObjects;
 
+const medkitPower = 20;
+const strengthPotionPower = 5;
+const platformWidth = 200;
+const platformHeight = 20;
 class Platform {
-  constructor(yPos, xPos) {
+  constructor(xPos, yPos) {
     this.yPos = yPos;
     this.xPos = xPos;
   }
   drawPlatform(ctx) {
-    ctx.fillRect(this.yPos, this.xPos, 30, 200);
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.xPos, this.yPos, platformWidth, platformHeight);
   }
 }
-
 function createWorld() {
-  gameobjects = [
-    new Platform(500, 300),
-    new Platform(700, 500),
-    new Platform(400, 500),
+  gameObjects = [
+    new Platform(500, 100),
+    new Platform(canvas.width / 2, canvas.height / 2),
+    new Platform(400, 200),
   ];
+  for (let i = 0; i < gameObjects.length; i++) {
+    gameObjects[i].drawPlatform(ctx);
+  }
 }
-
-// function detectCollisions(){
-//   let obj1;
-//   let obj2;
-
-//   // Reset collision state of all objects
-//   for (let i = 0; i < gameObjects.length; i++) {
-//       gameObjects[i].isColliding = false;
-//   }
-
-//   // Start checking for collisions
-//   for (let i = 0; i < gameObjects.length; i++)
-//   {
-//       obj1 = gameObjects[i];
-//       for (let j = i + 1; j < gameObjects.length; j++)
-//       {
-//           obj2 = gameObjects[j];
-
-//           // Compare object1 with object2
-//           if (rectIntersect(obj1.x, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height)){
-//               obj1.isColliding = true;
-//               obj2.isColliding = true;
-//           }
-//       }
-//   }
-// }
 
 class Player {
   constructor(xPos, yPos, num, image, direction) {
@@ -76,6 +57,10 @@ class Player {
     this.playerState = `idle_${this.direction}`;
     this.gravity = 0.05;
     this.gravitySpeed = 0;
+    this.size = 2;
+    this.width = spriteWidth * this.size;
+    this.height = spriteHeight * this.size;
+    this.jumpcounter = 0;
   }
   useMedkit() {
     if (this.medkit > 0) {
@@ -98,8 +83,8 @@ class Player {
       spriteHeight,
       this.x,
       this.y,
-      spriteWidth * 2,
-      spriteHeight * 2
+      this.width,
+      this.height
     );
     gameFrame++;
   }
@@ -126,11 +111,43 @@ class Player {
     }
   }
 
-  attack(player) {
+  attack() {
     // check if this attack hits player
     // if hit reduce hp on player
   }
+
+  detectCollisions() {
+    // Reset collision state of all objects
+    for (let i = 0; i < gameObjects.length; i++) {
+      if (
+        this.xPos < gameObjects[i].xPos ||
+        this.xPos > gameObjects[i].xPos + platformWidth
+      ) {
+      }
+    }
+
+    // Start checking for collisions
+    for (let i = 0; i < gameObjects.length; i++) {
+      // Compare object1 with object2
+      if (
+        rectIntersect(
+          obj1.x,
+          obj1.y,
+          obj1.width,
+          obj1.height,
+          obj2.x,
+          obj2.y,
+          obj2.width,
+          obj2.height
+        )
+      ) {
+        obj1.isColliding = true;
+        obj2.isColliding = true;
+      }
+    }
+  }
 } //Här slutar player-klassen
+
 const spriteWidth = 120;
 const spriteHeight = 80;
 
@@ -213,8 +230,6 @@ console.log(spriteAnimations);
 // const Platform2 = new Platform(500, 400);
 
 //Defenition av medkit och strength potion
-const medkitPower = 20;
-const strengthPotionPower = 5;
 
 // function collision({ Player1, Player2 }) {
 //   return Player1.x + Player1.width >= Player2.x;
@@ -302,9 +317,21 @@ window.addEventListener("keyup", function (event) {
       break;
   }
 });
-//Spelare 1
-const Player1 = new Player(100, 300, 1, Player1Img, "right");
-const Player2 = new Player(1100, 200, 2, Player2Img, "left");
+
+const Player1 = new Player(
+  canvas.width - (canvas.width / spriteWidth) * 120,
+  300,
+  1,
+  Player1Img,
+  "right"
+); //Skapar spelare 1
+const Player2 = new Player(
+  canvas.width - spriteWidth * 2,
+  200,
+  2,
+  Player2Img,
+  "left"
+); //Skapar spelare 2
 
 let lastTimestamp = 0,
   maxFPS = 90,
@@ -319,16 +346,13 @@ function animate(timestamp) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
+  createWorld(ctx);
   ctx.fillStyle = "black";
   ctx.fillRect(200, 600, 200, 30);
-  Player1.animate(ctx);
-  Player2.animate(ctx);
   Player1.newPosition();
   Player2.newPosition();
-  // if (collision({ Player1, Player2 })) {
-  //   Player1.xspeed = 0;
-  //   Player2.xspeed = 0;
-  // }
+  Player1.animate(ctx);
+  Player2.animate(ctx);
 
   window.requestAnimationFrame(animate);
 }
