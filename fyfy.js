@@ -229,8 +229,6 @@ console.log(spriteAnimations);
 // const Platform1 = new Platform(500, 300);
 // const Platform2 = new Platform(500, 400);
 
-//Defenition av medkit och strength potion
-
 // function collision({ Player1, Player2 }) {
 //   return Player1.x + Player1.width >= Player2.x;
 // }
