@@ -18,6 +18,9 @@ const medkitPower = 20;
 const strengthPotionPower = 5;
 const platformWidth = 200;
 const platformHeight = 20;
+let collisions = false;
+const spriteWidth = 120;
+const spriteHeight = 80;
 class Platform {
   constructor(xPos, yPos) {
     this.yPos = yPos;
@@ -30,9 +33,9 @@ class Platform {
 }
 function createWorld() {
   gameObjects = [
-    new Platform(500, 100),
+    new Platform(100, 300),
     new Platform(canvas.width / 2, canvas.height / 2),
-    new Platform(400, 200),
+    new Platform(300, 200),
   ];
   for (let i = 0; i < gameObjects.length; i++) {
     gameObjects[i].drawPlatform(ctx);
@@ -95,19 +98,23 @@ class Player {
   }
 
   newPosition() {
-    if (this.gravitySpeed < this.speed) {
-      this.gravitySpeed += this.gravity;
-    } else if (this.gravitySpeed >= this.speed) {
-      this.gravitySpeed = 0;
-    }
+    // if (this.gravitySpeed < this.speed) {
+    //   this.gravitySpeed += this.gravity;
+    // } else if (this.gravitySpeed >= this.speed) {
+    //   this.gravitySpeed = 0;
+    // }
     if (this.y + this.yspeed < canvas.height - 235) {
-      this.y += this.yspeed + this.gravitySpeed;
+      if (collisions === false) {
+        this.y += this.yspeed + this.gravitySpeed;
+      }
     }
     if (
       this.x + this.xspeed < canvas.width - spriteWidth &&
       this.x + this.xspeed > -spriteWidth
     ) {
-      this.x += this.xspeed;
+      if (collisions === false) {
+        this.x += this.xspeed;
+      }
     }
   }
 
@@ -117,39 +124,25 @@ class Player {
   }
 
   detectCollisions() {
-    // Reset collision state of all objects
+    collisions = false;
+    console.log(this.x);
     for (let i = 0; i < gameObjects.length; i++) {
       if (
-        this.xPos < gameObjects[i].xPos ||
-        this.xPos > gameObjects[i].xPos + platformWidth
+        this.x + this.width >= gameObjects[i].xPos ||
+        this.x + this.width <= gameObjects[i].xPos + platformWidth
       ) {
-      }
-    }
-
-    // Start checking for collisions
-    for (let i = 0; i < gameObjects.length; i++) {
-      // Compare object1 with object2
-      if (
-        rectIntersect(
-          obj1.x,
-          obj1.y,
-          obj1.width,
-          obj1.height,
-          obj2.x,
-          obj2.y,
-          obj2.width,
-          obj2.height
-        )
-      ) {
-        obj1.isColliding = true;
-        obj2.isColliding = true;
+        if (
+          this.y >= gameObjects[i].yPos ||
+          this.y <= gameObjects[i].yPos + platformHeight
+        ) {
+          collisions = true;
+        }
+      } else {
+        collisions = false;
       }
     }
   }
 } //Här slutar player-klassen
-
-const spriteWidth = 120;
-const spriteHeight = 80;
 
 let gameFrame = 0;
 const staggerFrames = 5;
@@ -279,11 +272,11 @@ window.addEventListener("keydown", function (event) {
 window.addEventListener("keyup", function (event) {
   switch (event.key) {
     case "w":
-      Player1.yspeed = 0;
+      Player1.yspeed = 3;
       Player1.playerState = `fall_${Player1.direction}`;
       break;
     case "s":
-      Player1.yspeed = 0;
+      Player1.yspeed = 3;
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "a":
@@ -298,11 +291,11 @@ window.addEventListener("keyup", function (event) {
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "ArrowUp":
-      Player2.yspeed = 0;
+      Player2.yspeed = 3;
       Player2.playerState = `fall_${Player2.direction}`;
       break;
     case "ArrowDown":
-      Player2.yspeed = 0;
+      Player2.yspeed = 3;
       Player2.playerState = `idle_${Player2.direction}`;
       break;
     case "ArrowLeft":
@@ -347,6 +340,8 @@ function animate(timestamp) {
   createWorld(ctx);
   ctx.fillStyle = "black";
   ctx.fillRect(200, 600, 200, 30);
+  Player1.detectCollisions();
+  Player2.detectCollisions();
   Player1.newPosition();
   Player2.newPosition();
   Player1.animate(ctx);
