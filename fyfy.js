@@ -63,7 +63,6 @@ class Player {
     this.size = 2;
     this.width = spriteWidth * this.size;
     this.height = spriteHeight * this.size;
-    this.jumpcounter = 0;
   }
   useMedkit() {
     if (this.medkit > 0) {
