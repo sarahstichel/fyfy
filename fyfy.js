@@ -14,11 +14,8 @@ Player2Img = new Image();
 Player2Img.src = "Player2.png";
 let gameObjects;
 
-const medkitPower = 20;
-const strengthPotionPower = 5;
 const platformWidth = 200;
 const platformHeight = 20;
-let collisions = false;
 const spriteWidth = 120;
 const spriteHeight = 80;
 class Platform {
@@ -34,8 +31,8 @@ class Platform {
 function createWorld() {
   gameObjects = [
     new Platform(100, 300),
-    new Platform(canvas.width / 2, canvas.height / 2),
-    new Platform(300, 200),
+    new Platform(150, 150),
+    new Platform(500, 600),
   ];
   for (let i = 0; i < gameObjects.length; i++) {
     gameObjects[i].drawPlatform(ctx);
@@ -47,12 +44,10 @@ class Player {
     this.name = "";
     this.hp = 100;
     this.strength = 3;
-    this.medkit = 0;
-    this.strengthPotion = 0;
     this.x = xPos;
     this.y = yPos;
     this.speed = 10;
-    this.yspeed = 0;
+    this.yspeed = 3;
     this.xspeed = 0;
     this.number = num;
     this.playerImage = image;
@@ -63,6 +58,7 @@ class Player {
     this.size = 2;
     this.width = spriteWidth * this.size;
     this.height = spriteHeight * this.size;
+    this.collisions = false;
   }
   useMedkit() {
     if (this.medkit > 0) {
@@ -97,21 +93,16 @@ class Player {
   }
 
   newPosition() {
-    // if (this.gravitySpeed < this.speed) {
-    //   this.gravitySpeed += this.gravity;
-    // } else if (this.gravitySpeed >= this.speed) {
-    //   this.gravitySpeed = 0;
-    // }
-    if (this.y + this.yspeed < canvas.height - 235) {
-      if (collisions === false) {
-        this.y += this.yspeed + this.gravitySpeed;
+    if (this.y + this.yspeed < canvas.height - this.height) {
+      if (this.collisions === false) {
+        this.y += this.yspeed;
       }
     }
     if (
       this.x + this.xspeed < canvas.width - spriteWidth &&
       this.x + this.xspeed > -spriteWidth
     ) {
-      if (collisions === false) {
+      if (this.collisions === false) {
         this.x += this.xspeed;
       }
     }
@@ -123,21 +114,22 @@ class Player {
   }
 
   detectCollisions() {
-    collisions = false;
-    console.log(this.x);
+    this.collisions = false;
     for (let i = 0; i < gameObjects.length; i++) {
       if (
-        this.x + this.width >= gameObjects[i].xPos ||
-        this.x + this.width <= gameObjects[i].xPos + platformWidth
+        this.x + this.width < gameObjects[i].xPos || //kollar om till höger om object
+        this.x > gameObjects[i].xPos + platformWidth // kollar om till vänster
       ) {
         if (
-          this.y >= gameObjects[i].yPos ||
-          this.y <= gameObjects[i].yPos + platformHeight
+          this.y + this.height < gameObjects[i].yPos ||
+          this.y > gameObjects[i].yPos + platformHeight
         ) {
-          collisions = true;
+          this.collisions = false;
         }
       } else {
-        collisions = false;
+        console.log(this.x);
+        console.table(gameObjects[i]);
+        this.collisions = true;
       }
     }
   }
@@ -217,13 +209,6 @@ animationStates.forEach((state, index) => {
   spriteAnimations[state.name] = frames;
 });
 console.log(spriteAnimations);
-
-// const Platform1 = new Platform(500, 300);
-// const Platform2 = new Platform(500, 400);
-
-// function collision({ Player1, Player2 }) {
-//   return Player1.x + Player1.width >= Player2.x;
-// }
 
 window.addEventListener("keydown", function (event) {
   switch (event.key) {
