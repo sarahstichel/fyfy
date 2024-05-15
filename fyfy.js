@@ -31,8 +31,8 @@ class Platform {
 function createWorld() {
   gameObjects = [
     new Platform(100, 300),
-    new Platform(150, 150),
-    new Platform(500, 600),
+    new Platform(500, 400),
+    new Platform(450, 350),
   ];
   for (let i = 0; i < gameObjects.length; i++) {
     gameObjects[i].drawPlatform(ctx);
@@ -58,6 +58,8 @@ class Player {
     this.size = 2;
     this.width = spriteWidth * this.size;
     this.height = spriteHeight * this.size;
+    this.collisionsY = false;
+    this.collisionsX = false;
     this.collisions = false;
   }
   useMedkit() {
@@ -94,16 +96,20 @@ class Player {
 
   newPosition() {
     if (this.y + this.yspeed < canvas.height - this.height) {
-      if (this.collisions === false) {
+      if (this.collisionsY === false) {
         this.y += this.yspeed;
+      } else {
+        this.y -= 0.1;
       }
     }
     if (
       this.x + this.xspeed < canvas.width - spriteWidth &&
       this.x + this.xspeed > -spriteWidth
     ) {
-      if (this.collisions === false) {
+      if (this.collisionsX === false) {
         this.x += this.xspeed;
+      } else {
+        this.x -= 1;
       }
     }
   }
@@ -114,22 +120,36 @@ class Player {
   }
 
   detectCollisions() {
-    this.collisions = false;
+    this.collisionsX = false;
+    this.collisionsY = false;
     for (let i = 0; i < gameObjects.length; i++) {
       if (
-        this.x + this.width < gameObjects[i].xPos || //kollar om till höger om object
-        this.x > gameObjects[i].xPos + platformWidth // kollar om till vänster
+        this.x < gameObjects[i].xPos + platformWidth &&
+        this.x + this.width - 180 > gameObjects[i].xPos // kollar om till vänster
       ) {
-        if (
-          this.y + this.height < gameObjects[i].yPos ||
-          this.y > gameObjects[i].yPos + platformHeight
-        ) {
-          this.collisions = false;
-        }
-      } else {
-        console.log(this.x);
-        console.table(gameObjects[i]);
+        this.collisionsX = true;
+      }
+      if (
+        this.y < gameObjects[i].yPos + platformHeight &&
+        this.y + this.height > gameObjects[i].yPos
+      ) {
+        this.collisionsY = true;
+      }
+    }
+  }
+  collision() {
+    for (let i = 0; i < gameObjects.length; i++) {
+      if (
+        this.x < gameObjects[i].xPos + platformWidth &&
+        this.x + this.width > gameObjects[i].xPos &&
+        this.y < gameObjects[i].yPos + platformHeight &&
+        this.y + this.height > gameObjects[i].yPos
+      ) {
+        // Collision detected!
         this.collisions = true;
+      } else {
+        // No collision
+        this.collisions = false;
       }
     }
   }
