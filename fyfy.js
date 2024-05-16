@@ -20,23 +20,28 @@ const spriteWidth = 120; // Sptites bredd
 const spriteHeight = 80; //Sprites höjd
 class Platform {
   //Playformer som man kan hoppa på
-  constructor(xPos, yPos) {
+  constructor(xPos, yPos, width, height, colour) {
     this.yPos = yPos;
     this.xPos = xPos;
+    this.width = width;
+    this.height = height;
+    this.colour = colour;
   }
   //Ritar platformen
   drawPlatform(ctx) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(this.xPos, this.yPos, platformWidth, platformHeight);
+    ctx.fillStyle = this.colour;
+    ctx.fillRect(this.xPos, this.yPos, this.width, this.height);
   }
 }
 //Funktion för att skapa alla plattfomer
 function createWorld() {
   //Lista med alla platformer
   gameObjects = [
-    new Platform(100, 300),
-    new Platform(800, 400),
-    // new Platform(450, 370),
+    new Platform(100, 300, platformWidth, platformHeight, "black"),
+    new Platform(900, 350, platformWidth, platformHeight, "black"),
+    new Platform(450, 370, platformWidth, platformHeight, "black"),
+    new Platform(0, 478, 700, 70, "transparent"),
+    new Platform(920, 478, canvas.width, 70, "transparent"),
   ];
   //Rittar ut plattformer en efter en
   for (let i = 0; i < gameObjects.length; i++) {
@@ -51,7 +56,7 @@ class Player {
     this.strength = 3;
     this.x = xPos;
     this.y = yPos;
-    this.speed = 10;
+    this.speed = 7;
     this.yspeed = 3;
     this.xspeed = 0;
     this.playerImage = image;
@@ -65,6 +70,7 @@ class Player {
     this.collisionsY = false;
     this.collisionsX = false;
     this.collisions = false;
+    this.fallspeed = 3;
   }
   //Rittar Player och animerar den
   animate(ctx) {
@@ -93,58 +99,60 @@ class Player {
     if (this.y + this.yspeed < canvas.height - (this.height + 80)) {
       if (this.collisions === false) {
         this.y += this.yspeed;
+      } else if (this.collisions === true) {
+        this.yspeed = 0;
       }
     }
-    //Ser till att player är inför kanterna på skärme
+    //Ser till att player är inför kanterna på skärmen
     if (
       this.x + this.xspeed < canvas.width - spriteWidth &&
       this.x + this.xspeed > -spriteWidth
     ) {
-      // Kollar att spelaren är innanför kanterna på skärmen
       if (this.collisions === false) {
         this.x += this.xspeed;
       }
     }
+
+    //     if(x===wetland){}
+    //       else (import.turtle===x)
+    //       {
+    //  return turtle
+    //       }
   }
 
   collision() {
     this.collisions = false;
     for (let i = 0; i < gameObjects.length; i++) {
       if (
-        this.x + 80 < gameObjects[i].xPos + platformWidth &&
-        this.x + this.width + 80 > gameObjects[i].xPos &&
-        this.y + 80 < gameObjects[i].yPos + platformHeight &&
-        this.y + this.height + 80 > gameObjects[i].yPos
+        this.x + 80 + this.xspeed <
+          gameObjects[i].xPos + gameObjects[i].width &&
+        this.x + this.width + 80 + this.xspeed > gameObjects[i].xPos &&
+        this.y + 80 + this.yspeed <
+          gameObjects[i].yPos + gameObjects[i].height &&
+        this.y + this.height + 80 + this.yspeed > gameObjects[i].yPos
       ) {
         // Kollistion upptäckt
         this.collisions = true;
-        //Kollar på höger av plattformen och hindrar spelare för att inte gå in i objecktet
-        if (this.x + 80 + this.xspeed < gameObjects[i].xPos) {
-          this.x = gameObjects[i].xPos - 160;
-        }
-        //Kollar på vänster av plattformen
-        else if (
-          this.x + this.width + this.xspeed + 80 >
-          gameObjects[i].xPos + platformWidth
-        ) {
-          this.x = gameObjects[i].xPos + 160;
-        }
-        //Kollar under plattformen
-        else if (
-          this.y + this.height + this.yspeed + 80 >
-          gameObjects[i].yPos
-        ) {
-          this.y = gameObjects[i].yPos;
-        } else if (
-          this.y + 80 + this.yspeed <
-          gameObjects[i].yPos + platformHeight
-        ) {
-          //
-          this.y = gameObjects[i].yPos + platformHeight;
-        }
+        console.log("collision");
+      }
+    }
+    //Heeeeeeeeeeej, dettya ser komplicerat uuuut. Lycka till med resten! -Linnea
+    //Wopsie!
+  }
+  fallspeed(leftRight, upDown) {
+    if (upDown == true && leftRight == false) {
+      if (this.collisions == true) {
+        this.yspeed = 0;
       } else {
-        // ingen collition
-        this.collisions = false;
+        this.yspeed = 5;
+      }
+    } else if (upDown == false && leftRight == true) {
+      if (this.collisions == true) {
+        this.yspeed = 0;
+        this.xspeed = 0;
+      } else {
+        this.yspeed = 5;
+        this.xspeed = 0;
       }
     }
   }
@@ -274,38 +282,79 @@ window.addEventListener("keyup", function (event) {
   //Funktionen som lyssnar när man slutar trycka knappen
   switch (event.key) {
     case "w":
-      Player1.yspeed = 3;
+      if (Player1.collisions == true) {
+        Player1.yspeed = 0;
+      } else {
+        Player1.yspeed = 5;
+      }
       Player1.playerState = `fall_${Player1.direction}`;
       break;
     case "s":
-      Player1.yspeed = 3;
+      if (Player1.collisions == true) {
+        Player1.yspeed = 0;
+      } else {
+        Player1.yspeed = 5;
+      }
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "a":
-      Player1.xspeed = 0;
+      if (Player1.collisions == true) {
+        Player1.yspeed = 0;
+        Player1.xspeed = 0;
+      } else {
+        Player1.yspeed = 5;
+        Player1.xspeed = 0;
+      }
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "d":
-      Player1.xspeed = 0;
+      if (Player1.collisions == true) {
+        Player1.yspeed = 0;
+        Player1.xspeed = 0;
+      } else {
+        Player1.yspeed = 5;
+        Player1.xspeed = 0;
+      }
+
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "f":
       Player1.playerState = `idle_${Player1.direction}`;
       break;
     case "ArrowUp":
-      Player2.yspeed = 3;
+      if (Player2.collisions == true) {
+        Player2.yspeed = 0;
+      } else {
+        Player2.yspeed = 5;
+      }
       Player2.playerState = `fall_${Player2.direction}`;
       break;
     case "ArrowDown":
-      Player2.yspeed = 3;
+      if (Player2.collisions == true) {
+        Player2.yspeed = 0;
+      } else {
+        Player2.yspeed = 5;
+      }
       Player2.playerState = `idle_${Player2.direction}`;
       break;
     case "ArrowLeft":
-      Player2.xspeed = 0;
+      if (Player1.collisions == true) {
+        Player2.yspeed = 0;
+        Player2.xspeed = 0;
+      } else {
+        Player2.yspeed = 5;
+        Player2.xspeed = 0;
+      }
       Player2.playerState = `idle_${Player2.direction}`;
       break;
     case "ArrowRight":
-      Player2.xspeed = 0;
+      if (Player1.collisions == true) {
+        Player2.yspeed = 0;
+        Player2.xspeed = 0;
+      } else {
+        Player2.yspeed = 5;
+        Player2.xspeed = 0;
+      }
       Player2.playerState = `idle_${Player2.direction}`;
       break;
   }
