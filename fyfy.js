@@ -9,38 +9,43 @@ backgroundImage.src = "theme.png"; //Bilden source är theme.png
 
 //Skapar Player elemenst
 Player1Img = new Image(); //Gör variabel Player1Img to Image format
-Player1Img.src = "Player1.png";
+Player1Img.src = "Player1.png"; //tilldelar Player1 bild "Player1.png"
 Player2Img = new Image();
 Player2Img.src = "Player2.png";
 let gameObjects;
 
-const platformWidth = 200;
-const platformHeight = 20;
-const spriteWidth = 120;
-const spriteHeight = 80;
+const platformWidth = 200; //Platformens bredd
+const platformHeight = 20; //Platformens höjd
+const spriteWidth = 120; // Sptites bredd
+const spriteHeight = 80; //Sprites höjd
 class Platform {
+  //Playformer som man kan hoppa på
   constructor(xPos, yPos) {
     this.yPos = yPos;
     this.xPos = xPos;
   }
+  //Ritar platformen
   drawPlatform(ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(this.xPos, this.yPos, platformWidth, platformHeight);
   }
 }
+//Funktion för att skapa alla plattfomer
 function createWorld() {
+  //Lista med alla platformer
   gameObjects = [
     new Platform(100, 300),
-    new Platform(500, 400),
-    new Platform(450, 350),
+    new Platform(800, 400),
+    // new Platform(450, 370),
   ];
+  //Rittar ut plattformer en efter en
   for (let i = 0; i < gameObjects.length; i++) {
     gameObjects[i].drawPlatform(ctx);
   }
 }
 
 class Player {
-  constructor(xPos, yPos, num, image, direction) {
+  constructor(xPos, yPos, image, direction) {
     this.name = "";
     this.hp = 100;
     this.strength = 3;
@@ -49,25 +54,19 @@ class Player {
     this.speed = 10;
     this.yspeed = 3;
     this.xspeed = 0;
-    this.number = num;
     this.playerImage = image;
     this.direction = direction;
     this.playerState = `idle_${this.direction}`;
     this.gravity = 0.05;
     this.gravitySpeed = 0;
     this.size = 2;
-    this.width = spriteWidth * this.size;
-    this.height = spriteHeight * this.size;
+    this.width = spriteWidth * this.size - 180;
+    this.height = spriteHeight * this.size - 80;
     this.collisionsY = false;
     this.collisionsX = false;
     this.collisions = false;
   }
-  useMedkit() {
-    if (this.medkit > 0) {
-      this.hp += medkitPower;
-      this.medkit -= 1;
-    }
-  }
+  //Rittar Player och animerar den
   animate(ctx) {
     let position =
       Math.floor(gameFrame / staggerFrames) %
@@ -83,72 +82,68 @@ class Player {
       spriteHeight,
       this.x,
       this.y,
-      this.width,
-      this.height
+      spriteWidth * this.size,
+      spriteHeight * this.size
     );
     gameFrame++;
   }
-  useStrengthpotion() {
-    if (this.strengthPotion > 0) {
-      this.strength += strengthPotionPower;
-    }
-  }
-
+  //Räknar ut players nya position och kollar om den kan gå dit
   newPosition() {
-    if (this.y + this.yspeed < canvas.height - this.height) {
-      if (this.collisionsY === false) {
+    //Kollar att spelaren ramlar inte under canvas höjd
+    if (this.y + this.yspeed < canvas.height - (this.height + 80)) {
+      if (this.collisions === false) {
         this.y += this.yspeed;
-      } else {
-        this.y -= 0.1;
       }
     }
+    //Ser till att player är inför kanterna på skärme
     if (
       this.x + this.xspeed < canvas.width - spriteWidth &&
       this.x + this.xspeed > -spriteWidth
     ) {
-      if (this.collisionsX === false) {
+      // Kollar att spelaren är innanför kanterna på skärmen
+      if (this.collisions === false) {
         this.x += this.xspeed;
-      } else {
-        this.x -= 1;
       }
     }
   }
 
-  attack() {
-    // check if this attack hits player
-    // if hit reduce hp on player
-  }
-
-  detectCollisions() {
-    this.collisionsX = false;
-    this.collisionsY = false;
-    for (let i = 0; i < gameObjects.length; i++) {
-      if (
-        this.x < gameObjects[i].xPos + platformWidth &&
-        this.x + this.width - 180 > gameObjects[i].xPos // kollar om till vänster
-      ) {
-        this.collisionsX = true;
-      }
-      if (
-        this.y < gameObjects[i].yPos + platformHeight &&
-        this.y + this.height > gameObjects[i].yPos
-      ) {
-        this.collisionsY = true;
-      }
-    }
-  }
   collision() {
+    this.collisions = false;
     for (let i = 0; i < gameObjects.length; i++) {
       if (
-        this.x < gameObjects[i].xPos + platformWidth &&
-        this.x + this.width > gameObjects[i].xPos &&
-        this.y < gameObjects[i].yPos + platformHeight &&
-        this.y + this.height > gameObjects[i].yPos
+        this.x + 80 < gameObjects[i].xPos + platformWidth &&
+        this.x + this.width + 80 > gameObjects[i].xPos &&
+        this.y + 80 < gameObjects[i].yPos + platformHeight &&
+        this.y + this.height + 80 > gameObjects[i].yPos
       ) {
-        // Collision detected!
+        // Kollistion upptäckt
         this.collisions = true;
+        //Kollar på höger av plattformen och hindrar spelare för att inte gå in i objecktet
+        if (this.x + 80 + this.xspeed < gameObjects[i].xPos) {
+          this.x = gameObjects[i].xPos - 160;
+        }
+        //Kollar på vänster av plattformen
+        else if (
+          this.x + this.width + this.xspeed + 80 >
+          gameObjects[i].xPos + platformWidth
+        ) {
+          this.x = gameObjects[i].xPos + 160;
+        }
+        //Kollar under plattformen
+        else if (
+          this.y + this.height + this.yspeed + 80 >
+          gameObjects[i].yPos
+        ) {
+          this.y = gameObjects[i].yPos;
+        } else if (
+          this.y + 80 + this.yspeed <
+          gameObjects[i].yPos + platformHeight
+        ) {
+          //
+          this.y = gameObjects[i].yPos + platformHeight;
+        }
       } else {
-        // No collision
+        // ingen collition
         this.collisions = false;
       }
     }
@@ -157,8 +152,9 @@ class Player {
 
 let gameFrame = 0;
 const staggerFrames = 5;
-const spriteAnimations = [];
+const spriteAnimations = []; //Lista fylls in med alla animationer och dess koordinater
 const animationStates = [
+  //Lista med animationer, deras namn och antal frames
   {
     name: "idle_right",
     frames: 10,
@@ -218,19 +214,20 @@ const animationStates = [
 ];
 
 animationStates.forEach((state, index) => {
+  //Går ingenom varje animation
   let frames = {
-    loc: [],
+    loc: [], //Tom lista som fylls med animationens x och y koordinat
   };
   for (let j = 0; j < state.frames; j++) {
-    let positionX = j * spriteWidth;
-    let positionY = index * spriteHeight;
-    frames.loc.push({ x: positionX, y: positionY });
+    let positionX = j * spriteWidth; //beräknar x koordinat för varje frame
+    let positionY = index * spriteHeight; //beräknar y koordinat för varje frame
+    frames.loc.push({ x: positionX, y: positionY }); //Fyller lista "loc" med x ovh y koordinaret
   }
-  spriteAnimations[state.name] = frames;
+  spriteAnimations[state.name] = frames; //Byter antalet frames mot dess x och y koordinat
 });
-console.log(spriteAnimations);
 
 window.addEventListener("keydown", function (event) {
+  // Funktion som lyssnar påvad användare trycker
   switch (event.key) {
     case "w":
       Player1.yspeed = -Player1.speed;
@@ -274,6 +271,7 @@ window.addEventListener("keydown", function (event) {
 });
 
 window.addEventListener("keyup", function (event) {
+  //Funktionen som lyssnar när man slutar trycka knappen
   switch (event.key) {
     case "w":
       Player1.yspeed = 3;
@@ -316,41 +314,37 @@ window.addEventListener("keyup", function (event) {
 const Player1 = new Player(
   canvas.width - (canvas.width / spriteWidth) * 120,
   300,
-  1,
   Player1Img,
   "right"
 ); //Skapar spelare 1
 const Player2 = new Player(
   canvas.width - spriteWidth * 2,
   200,
-  2,
   Player2Img,
   "left"
 ); //Skapar spelare 2
 
 let lastTimestamp = 0,
   maxFPS = 90,
-  timestep = 1000 / maxFPS;
+  timestep = 1000 / maxFPS; // hjälper för koden att inte överbelasta uträkningarna
 
 function animate(timestamp) {
+  //ritar ut allt och anropar funktioner
   if (timestamp - lastTimestamp < timestep) {
     requestAnimationFrame(animate);
     return;
   }
   lastTimestamp = timestamp;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // Rita bakgrunden
-  createWorld(ctx);
-  ctx.fillStyle = "black";
-  ctx.fillRect(200, 600, 200, 30);
-  Player1.detectCollisions();
-  Player2.detectCollisions();
+  createWorld(ctx); //Anropar funktinen som ritar ut platformer
+  Player1.collision();
+  Player2.collision();
   Player1.newPosition();
   Player2.newPosition();
   Player1.animate(ctx);
   Player2.animate(ctx);
 
-  window.requestAnimationFrame(animate);
+  window.requestAnimationFrame(animate); // funktionen anropar sig själv
 }
 window.requestAnimationFrame(animate);
