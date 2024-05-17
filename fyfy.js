@@ -111,13 +111,10 @@ class Player {
       if (this.collisions === false) {
         this.x += this.xspeed;
       }
+      if (this.y + this.height + 85 >= canvas.height) {
+        this.hp = 0;
+      }
     }
-
-    //     if(x===wetland){}
-    //       else (import.turtle===x)
-    //       {
-    //  return turtle
-    //       }
   }
 
   collision() {
@@ -133,12 +130,10 @@ class Player {
       ) {
         // Kollistion upptäckt
         this.collisions = true;
-        console.log("collision");
       }
     }
-    //Heeeeeeeeeeej, dettya ser komplicerat uuuut. Lycka till med resten! -Linnea
-    //Wopsie!
   }
+
   fallspeed(leftRight, upDown) {
     if (upDown == true && leftRight == false) {
       if (this.collisions == true) {
@@ -154,6 +149,15 @@ class Player {
         this.yspeed = 5;
         this.xspeed = 0;
       }
+    }
+  }
+  //Kollar att spelaren lever
+  alive() {
+    if (this.hp <= 0) {
+      this.playerState = `death_${this.direction}`;
+      setTimeout(() => {
+        alert("Game Over");
+      }, 100);
     }
   }
 } //Här slutar player-klassen
@@ -255,7 +259,6 @@ window.addEventListener("keydown", function (event) {
       Player1.playerState = `run_${Player1.direction}`;
       break;
     case "f":
-      Player1.attack();
       Player1.playerState = `attack_${Player1.direction}`;
       break;
     case "ArrowUp":
@@ -274,6 +277,9 @@ window.addEventListener("keydown", function (event) {
       Player2.xspeed = Player2.speed;
       Player2.direction = "right";
       Player2.playerState = `run_${Player2.direction}`;
+      break;
+    case "-":
+      Player2.playerState = `attack_${Player2.direction}`;
       break;
   }
 });
@@ -357,6 +363,9 @@ window.addEventListener("keyup", function (event) {
       }
       Player2.playerState = `idle_${Player2.direction}`;
       break;
+    case "-":
+      Player2.playerState = `idle_${Player2.direction}`;
+      break;
   }
 });
 
@@ -391,9 +400,10 @@ function animate(timestamp) {
   Player2.collision();
   Player1.newPosition();
   Player2.newPosition();
+  Player1.alive();
+  Player2.alive();
   Player1.animate(ctx);
   Player2.animate(ctx);
-
   window.requestAnimationFrame(animate); // funktionen anropar sig själv
 }
 window.requestAnimationFrame(animate);
